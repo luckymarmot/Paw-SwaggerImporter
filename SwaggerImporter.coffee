@@ -1,3 +1,5 @@
+require "tv4.js"
+
 SwaggerImporter = ->
 
     # Create Paw requests from a Postman Request (object)
@@ -73,10 +75,11 @@ SwaggerImporter = ->
     @importString = (context, string) ->
     
         # Parse JSON collection
-        
         swaggerCollection = JSON.parse string
-          
-        if not swaggerCollection
+        schema = readFile "schema.json" 
+        valid = tv4.validate string, schema
+
+        if not valid
           throw new Error "Invalid Swagger file (not a valid JSON)"
           
         if swaggerCollection

@@ -4,7 +4,9 @@
   "devDependencies": {
     "coffee-script": "latest",
     "mkdirp": "~0.5.0",
-    "ncp": "~1.0.1"
+    "ncp": "~1.0.1",
+    "tv4": "~1.1.9",
+    "swagger-schema-official": "latest"
   },
   "repository": {
     "type": "git",

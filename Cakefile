@@ -27,8 +27,8 @@ build_coffee = (callback) ->
 build_copy = () ->
     fs.writeFileSync "#{ build_dir }/README.md", fs.readFileSync("./README.md")
     fs.writeFileSync "#{ build_dir }/LICENSE", fs.readFileSync("./LICENSE")
-    # fs.writeFileSync "#{ build_dir }/swagger-validate.min.js", fs.readFileSync("./node_modules/swagger-client-generator/dist/swagger-validate.min.js")
-    # fs.writeFileSync "#{ build_dir }/swagger-client-generator.js", fs.readFileSync("./node_modules/swagger-client-generator/dist/swagger-client-generator.js")
+    fs.writeFileSync "#{ build_dir }/tv4.js", fs.readFileSync("./node_modules/tv4/tv4.js")
+    fs.writeFileSync "#{ build_dir }/schema.json", fs.readFileSync("./node_modules/swagger-schema-official/schema.json")
     # fs.writeFileSync "#{ build_dir }/swagger-client-generator.min.js", fs.readFileSync("./node_modules/swagger-client-generator/dist/swagger-client-generator.min.js")
     # fs.writeFileSync "#{ build_dir }/swagger-client-generator.min.js.map", fs.readFileSync("./node_modules/swagger-client-generator/dist/swagger-client-generator.min.js.map")
 
