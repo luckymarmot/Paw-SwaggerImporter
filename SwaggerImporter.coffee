@@ -23,22 +23,8 @@ SwaggerImporter = ->
           # Add Headers
           if swaggerRequestParamValue.in == 'header'
             headers.push swaggerRequestParamValue.name
-            
-        # Build swaggerRequestQueries
-        swaggerRequestQueries = '?'
         
-        for query, index in queries
-          if index != queries.length - 1
-            swaggerRequestQueries = swaggerRequestQueries.concat "#{query}=value&"
-          else
-            swaggerRequestQueries = swaggerRequestQueries.concat "#{query}=value"
-        
-        swaggerRequestUrl = swaggerCollection.schemes[0] + '://' +
-        swaggerCollection.host +
-        swaggerCollection.basePath +
-        swaggerRequestPath +
-        swaggerRequestQueries
-        
+        swaggerRequestUrl = @createSwaggerRequestUrl swaggerCollection, swaggerRequestPath, queries
         swaggerRequestMethod = swaggerRequestMethod.toUpperCase()
           
         # Create Paw request
@@ -98,6 +84,28 @@ SwaggerImporter = ->
           
         return pawRequest
     
+    @createSwaggerRequestUrl = (swaggerCollection, swaggerRequestPath, queries) ->
+      
+        # Build swaggerRequestQueries
+        if queries.length > 0
+          swaggerRequestQueries = '?'
+        
+        for query, index in queries
+          if index != queries.length - 1
+            swaggerRequestQueries = swaggerRequestQueries.concat "#{query}=value&"
+          else
+            swaggerRequestQueries = swaggerRequestQueries.concat "#{query}=value"
+        
+        swaggerRequestUrl = swaggerCollection.schemes[0] + '://' +
+        swaggerCollection.host +
+        swaggerCollection.basePath +
+        swaggerRequestPath
+        
+        if swaggerRequestQueries
+          swaggerRequestUrl = swaggerRequestUrl + swaggerRequestQueries
+        
+        return swaggerRequestUrl
+            
     @createPawGroup = (context, swaggerCollection, swaggerRequestPathName, swaggerRequestPathValue) ->
 
         # Create Paw group
