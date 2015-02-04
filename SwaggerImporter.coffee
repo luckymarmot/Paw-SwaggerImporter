@@ -17,11 +17,11 @@ SwaggerImporter = ->
         for index, swaggerRequestParamValue of swaggerRequestValue.parameters
           
           # Add Queries
-          if swaggerRequestParamValue.in == 'query'
+          if swaggerRequestParamValue.in == 'query' and swaggerRequestParamValue.type == 'string'
             queries.push swaggerRequestParamValue.name
                       
           # Add Headers
-          if swaggerRequestParamValue.in == 'header'
+          if swaggerRequestParamValue.in == 'header' and swaggerRequestParamValue.type == 'string'
             headers.push swaggerRequestParamValue.name
         
         swaggerRequestUrl = @createSwaggerRequestUrl swaggerCollection, swaggerRequestPath, queries
