@@ -129,7 +129,7 @@ SwaggerImporter = ->
         valid = tv4.validate swaggerCollection, JSON.parse(schema)
 
         if not valid
-          throw new Error "Invalid Swagger file (not a valid JSON or invalid schema)"
+          throw new Error "Invalid Swagger file (not a valid JSON or invalid schema or not Swagger 2.0)"
           
         if swaggerCollection
           
