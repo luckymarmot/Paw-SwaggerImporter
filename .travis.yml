@@ -1,0 +1,19 @@
+language: node_js
+node_js:
+- '0.10'
+before_install:
+- npm install coffee-script
+before_script:
+- ./node_modules/.bin/cake archive
+script:
+- ./node_modules/.bin/cake test
+deploy:
+  provider: releases
+  api_key:
+    secure: Ijc/h2idPc2TI6mLhk5bFFYpa6LTxTQIiXcXgD0o5esY6Gruva1O4ze3HvWxiSMH2pFj3UfPfsn0cOAhD/MQGTwrhsW73TiZd5jjV0+e1Jb6W2dpFhiOSUdDNX3NCvYWqsiE0HMBaqVVmfRPGt0xe9MCu/vEq4ahxOI/oleEQlc=
+  file: build/SwaggerImporter.zip
+  skip_cleanup: true
+  on:
+    tags: true
+    all_branches: true
+    repo: luckymarmot/Paw-SwaggerImporter
