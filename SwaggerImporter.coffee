@@ -12,6 +12,8 @@ SwaggerImporter = ->
           
         headers = []
         queries = []
+        formData = []
+        body = []
         
         # Extract Headers and Query params
         for index, swaggerRequestParamValue of swaggerRequestValue.parameters
@@ -23,6 +25,14 @@ SwaggerImporter = ->
           # Add Headers
           if swaggerRequestParamValue.in == 'header' and swaggerRequestParamValue.type == 'string'
             headers.push swaggerRequestParamValue.name
+            
+          # Add Url Encoded 
+          if swaggerRequestParamValue.in == 'formData' and swaggerRequestParamValue.type == 'string'
+            body.push swaggerRequestParamValue.name
+            
+          # Add Body
+          if swaggerRequestParamValue.in == 'body' #Only string
+            body.push swaggerRequestParamValue.name
         
         swaggerRequestUrl = @createSwaggerRequestUrl swaggerCollection, swaggerRequestPath, queries
         swaggerRequestMethod = swaggerRequestMethod.toUpperCase()
