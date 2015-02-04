@@ -3,25 +3,25 @@ require "tv4.js"
 SwaggerImporter = ->
 
     # Create Paw requests from a Postman Request (object)
-    @createPawRequest = (context, swaggerCollection, swaggerPath, swaggerRequest) ->
-    
+    @createPawRequest = (context, swaggerCollection, swaggerRequestPath, swaggerRequestMethod, swaggerRequestValue) ->
+
+        if swaggerRequestValue.summary
+          swaggerRequestTitle = swaggerRequestValue.summary
+        else
+          swaggerRequestTitle = swaggerRequestPath
+          
+        swaggerRequestUrl = swaggerCollection.schemes[0] + '://' + swaggerCollection.host + swaggerCollection.basePath + swaggerRequestPath
+        swaggerRequestMethod = swaggerRequestMethod.toUpperCase()
+          
         # Create Paw request
-        for own swaggerMethod, request of swaggerRequest
+        pawRequest = context.createRequest swaggerRequestTitle, swaggerRequestMethod, swaggerRequestUrl
+        
+        for index, swaggerRequestParamValue of swaggerRequestValue.parameters
           
-          swaggerRequestTitle = request.summary
-          swaggerRequestUrl = swaggerCollection.schemes[0] + "://" + swaggerCollection.host + swaggerCollection.basePath + swaggerPath
-          swaggerMethod = swaggerMethod.toUpperCase()
+          # Add Headers
+          if swaggerRequestParamValue.in == 'header'
+            pawRequest.setHeader swaggerRequestParamValue.name, "value"
           
-          pawRequest = context.createRequest swaggerRequestTitle, swaggerMethod, swaggerRequestUrl
-          
-          # # Add Headers
-          # # Postman stores headers like HTTP headers, separated by \n
-          # postmanHeaders = postmanRequest["headers"].split "\n"
-          # for headerLine in postmanHeaders
-          #     match = headerLine.match /^([^\s\:]*)\s*\:\s*(.*)$/
-          #     if match
-          #         pawRequest.setHeader match[1], match[2]
-          # 
           # # Set raw body
           # if postmanRequest["dataMode"] == "raw"
           #     contentType = pawRequest.getHeaderByName "Content-Type"
@@ -68,10 +68,23 @@ SwaggerImporter = ->
           #     pawRequest.multipartBody = bodyObject
           # 
           
-          break # Should have only one key
-        
         return pawRequest
     
+    @createPawGroup = (context, swaggerCollection, swaggerRequestPathName, swaggerRequestPathValue) ->
+
+        # Create Paw group
+        pawGroup = context.createRequestGroup swaggerRequestPathName
+
+        for own swaggerRequestMethod, swaggerRequestValue of swaggerRequestPathValue
+              
+            # Create a Paw request
+            pawRequest = @createPawRequest context, swaggerCollection, swaggerRequestPathName, swaggerRequestMethod, swaggerRequestValue
+    
+            # Add request to root group
+            pawGroup.appendChild pawRequest
+
+        return pawGroup
+        
     @importString = (context, string) ->
     
         # Parse JSON collection
@@ -83,19 +96,17 @@ SwaggerImporter = ->
           throw new Error "Invalid Swagger file (not a valid JSON)"
           
         if swaggerCollection
+          
           # Create a PawGroup
           pawRootGroup = context.createRequestGroup swaggerCollection.info.title
-      
-          # Add Swagger requests in root
-          if pawRootGroup
-            
-              for own path, request of swaggerCollection.paths
-                    
-                  # Create a Paw request
-                  pawRequest = @createPawRequest context, swaggerCollection, path, request
           
-                  # Add request to root group
-                  pawRootGroup.appendChild pawRequest
+          # Add Swagger groups
+          for own swaggerRequestPathName, swaggerRequestPathValue of swaggerCollection.paths
+    
+            pawGroup = @createPawGroup context, swaggerCollection, swaggerRequestPathName, swaggerRequestPathValue
+
+            # Add group to root
+            pawRootGroup.appendChild pawGroup
       
           return true
     
