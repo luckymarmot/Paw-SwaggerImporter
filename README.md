@@ -2,7 +2,9 @@
 
 # Swagger Importer (Paw Extension)
 
-A [Paw Extension](http://luckymarmot.com/paw/extensions/) to import [Swagger](http://swagger.io/) into Paw.
+A [Paw Extension](http://luckymarmot.com/paw/extensions/) to import [Swagger JSON Files](http://swagger.io/) into Paw.
+
+Notice: Only [Swagger 2.0 specification](https://github.com/swagger-api/swagger-spec/blob/master/versions/2.0.md)  compatible -> [Swagger 1.2 to 2.0 Migration Guide](https://github.com/swagger-api/swagger-spec/wiki/Swagger-1.2-to-2.0-Migration-Guide).
 
 ## How to use?
 

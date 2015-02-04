@@ -2,7 +2,7 @@ require "tv4.js"
 
 SwaggerImporter = ->
 
-    # Create Paw requests from a Postman Request (object)
+    # Create Paw requests from a Swagger Request (object)
     @createPawRequest = (context, swaggerCollection, swaggerRequestPath, swaggerRequestMethod, swaggerRequestValue) ->
 
         if swaggerRequestValue.summary
