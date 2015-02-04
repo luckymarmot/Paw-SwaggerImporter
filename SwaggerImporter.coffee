@@ -49,7 +49,7 @@ SwaggerImporter = ->
         # Add Headers
         for header in headers
           pawRequest.setHeader header, "value"
-          
+        
         # # Set raw body
         # if postmanRequest["dataMode"] == "raw"
         #     contentType = pawRequest.getHeaderByName "Content-Type"
@@ -117,11 +117,11 @@ SwaggerImporter = ->
     
         # Parse JSON collection
         swaggerCollection = JSON.parse string
-        schema = readFile "schema.json" 
-        valid = tv4.validate string, schema
+        schema = readFile "schema.json"
+        valid = tv4.validate swaggerCollection, JSON.parse(schema)
 
         if not valid
-          throw new Error "Invalid Swagger file (not a valid JSON)"
+          throw new Error "Invalid Swagger file (not a valid JSON or invalid schema)"
           
         if swaggerCollection
           
