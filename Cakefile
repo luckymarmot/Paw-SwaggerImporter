@@ -29,8 +29,7 @@ build_copy = () ->
     fs.writeFileSync "#{ build_dir }/LICENSE", fs.readFileSync("./LICENSE")
     fs.writeFileSync "#{ build_dir }/tv4.js", fs.readFileSync("./node_modules/tv4/tv4.js")
     fs.writeFileSync "#{ build_dir }/schema.json", fs.readFileSync("./node_modules/swagger-schema-official/schema.json")
-    # fs.writeFileSync "#{ build_dir }/swagger-client-generator.min.js", fs.readFileSync("./node_modules/swagger-client-generator/dist/swagger-client-generator.min.js")
-    # fs.writeFileSync "#{ build_dir }/swagger-client-generator.min.js.map", fs.readFileSync("./node_modules/swagger-client-generator/dist/swagger-client-generator.min.js.map")
+    fs.writeFileSync "#{ build_dir }/yaml.legacy.js", fs.readFileSync("./node_modules/yamljs/dist/yaml.legacy.js")
 
 # build: build CoffeeScript and copy files to build directory
 build = (callback) ->

@@ -133,13 +133,20 @@ SwaggerImporter = ->
         
     @importString = (context, string) ->
     
-        # Parse JSON collection
-        swaggerCollection = JSON.parse string
+        try
+          # Try JSON parse
+          swaggerCollection = JSON.parse string
+        catch error
+          # Try YAML parse
+          # throw new Error "Debug :" + YAML
+          YAML = readFile "yaml.legacy.js"
+          swaggerCollection = YAML.parse string
+        
         schema = readFile "schema.json"
         valid = tv4.validate swaggerCollection, JSON.parse(schema)
 
         if not valid
-          throw new Error "Invalid Swagger file (not a valid JSON or invalid schema or not Swagger 2.0)"
+          throw new Error "Invalid Swagger file (invalid schema or not Swagger 2.0)"
           
         if swaggerCollection
           
