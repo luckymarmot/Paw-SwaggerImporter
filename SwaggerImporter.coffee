@@ -13,13 +13,13 @@ SwaggerImporter = ->
           
         headers = {}
         queries = {}
-        formData = []
-        body = []
+        formData = {}
+        body = {}
         
         # Extract contentType from Consumes and add the first one to Headers
         if swaggerRequestValue.consumes
           for contentType in swaggerRequestValue.consumes
-            headers["Content-type"] = contentType
+            headers["Content-Type"] = contentType
             break
                   
         # Extract Headers and Query params
@@ -31,15 +31,15 @@ SwaggerImporter = ->
                       
           # Add Headers
           if swaggerRequestParamValue.in == 'header' and swaggerRequestParamValue.type == 'string'
-            headers[swaggerRequestParamValue.name] = ''
+            headers[swaggerRequestParamValue.name] = swaggerRequestParamValue.name
             
           # Add Url Encoded 
           if swaggerRequestParamValue.in == 'formData' and swaggerRequestParamValue.type == 'string'
-            body.push swaggerRequestParamValue.name
+            formData[swaggerRequestParamValue.name] = swaggerRequestParamValue.name
             
           # Add Body
           if swaggerRequestParamValue.in == 'body' #Only string
-            body.push swaggerRequestParamValue.name
+            body[swaggerRequestParamValue.name] = swaggerRequestParamValue.name
         
         swaggerRequestUrl = @createSwaggerRequestUrl swaggerCollection, swaggerRequestPath, queries
         swaggerRequestMethod = swaggerRequestMethod.toUpperCase()
@@ -74,30 +74,14 @@ SwaggerImporter = ->
         #     if not foundBody
         #         pawRequest.body = rawRequestBody
         # 
-        # # Set Form URL-Encoded body
-        # else if postmanRequest["dataMode"] == "urlencoded"
-        #     postmanBodyData = postmanRequest["data"]
-        #     bodyObject = new Object()
-        #     for bodyItem in postmanBodyData
-        #         # Note: it sounds like all data fields are "text" type
-        #         # when in "urlencoded" data mode.
-        #         if bodyItem["type"] == "text"
-        #             bodyObject[bodyItem["key"]] = bodyItem["value"]
-        # 
-        #     pawRequest.urlEncodedBody = bodyObject;
-        # 
-        # # Set Multipart body
-        # else if postmanRequest["dataMode"] == "params"
-        #     postmanBodyData = postmanRequest["data"]
-        #     bodyObject = new Object()
-        #     for bodyItem in postmanBodyData
-        #         # Note: due to Apple Sandbox limitations, we cannot import
-        #         # "file" type items
-        #         if bodyItem["type"] == "text"
-        #             bodyObject[bodyItem["key"]] = bodyItem["value"]
-        # 
-        #     pawRequest.multipartBody = bodyObject
-        # 
+        # Set Form URL-Encoded body
+        if Object.keys(formData).length > 0      
+            # Set Form URL-Encoded body
+            if headers['Content-Type'] == "application/x-www-form-urlencoded"
+              pawRequest.urlEncodedBody = formData
+            # Set Multipart body
+            else if headers['Content-Type'] == "multipart/form-data"
+              pawRequest.multipartBody = formData
           
         return pawRequest
     
