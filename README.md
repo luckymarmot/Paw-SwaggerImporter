@@ -1,10 +1,12 @@
 [![Build Status](https://travis-ci.org/luckymarmot/Paw-SwaggerImporter.svg?branch=master)](https://travis-ci.org/luckymarmot/Paw-SwaggerImporter)
 
-# Swagger Importer (Paw Extension)
+# Swagger Specification Importer (Paw Extension)
 
-A [Paw Extension](http://luckymarmot.com/paw/extensions/) to import [Swagger JSON/YAML Files](http://swagger.io/) into Paw.
+A [Paw Extension](http://luckymarmot.com/paw/extensions/) to import [Swagger](http://swagger.io/) Specification into Paw. (**JSON/YAML** supported)
 
-Notice: Only [Swagger 2.0 specification](https://github.com/swagger-api/swagger-spec/blob/master/versions/2.0.md)  compatible -> [Swagger 1.2 to 2.0 Migration Guide](https://github.com/swagger-api/swagger-spec/wiki/Swagger-1.2-to-2.0-Migration-Guide).
+#### Notice :
+
+Only [Swagger schema 2.0 specification](https://github.com/swagger-api/swagger-spec/blob/master/versions/2.0.md) supported -> [Swagger 1.2 to 2.0 Migration Guide](https://github.com/swagger-api/swagger-spec/wiki/Swagger-1.2-to-2.0-Migration-Guide).
 
 ## How to use?
 
