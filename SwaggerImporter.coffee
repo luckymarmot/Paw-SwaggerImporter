@@ -11,21 +11,27 @@ SwaggerImporter = ->
         else
           swaggerRequestTitle = swaggerRequestPath
           
-        headers = []
-        queries = []
+        headers = {}
+        queries = {}
         formData = []
         body = []
         
+        # Extract contentType from Consumes and add the first one to Headers
+        if swaggerRequestValue.consumes
+          for contentType in swaggerRequestValue.consumes
+            headers["Content-type"] = contentType
+            break
+                  
         # Extract Headers and Query params
         for index, swaggerRequestParamValue of swaggerRequestValue.parameters
           
           # Add Queries
           if swaggerRequestParamValue.in == 'query' and swaggerRequestParamValue.type == 'string'
-            queries.push swaggerRequestParamValue.name
+            queries[swaggerRequestParamValue.name] = swaggerRequestParamValue.name 
                       
           # Add Headers
           if swaggerRequestParamValue.in == 'header' and swaggerRequestParamValue.type == 'string'
-            headers.push swaggerRequestParamValue.name
+            headers[swaggerRequestParamValue.name] = ''
             
           # Add Url Encoded 
           if swaggerRequestParamValue.in == 'formData' and swaggerRequestParamValue.type == 'string'
@@ -44,8 +50,8 @@ SwaggerImporter = ->
         # for index, swaggerRequestParamValue of swaggerRequestValue.parameters
         
         # Add Headers
-        for header in headers
-          pawRequest.setHeader header, "value"
+        for key, value of headers
+          pawRequest.setHeader key, value
         
         # # Set raw body
         # if postmanRequest["dataMode"] == "raw"
@@ -98,14 +104,11 @@ SwaggerImporter = ->
     @createSwaggerRequestUrl = (swaggerCollection, swaggerRequestPath, queries) ->
       
         # Build swaggerRequestQueries
-        if queries.length > 0
-          swaggerRequestQueries = '?'
+        if Object.keys(queries).length > 0
+          swaggerRequestQueries = []
         
-        for query, index in queries
-          if index != queries.length - 1
-            swaggerRequestQueries = swaggerRequestQueries.concat "#{query}=value&"
-          else
-            swaggerRequestQueries = swaggerRequestQueries.concat "#{query}=value"
+        for key, value of queries
+          swaggerRequestQueries.push "#{key}=#{value}"
         
         swaggerRequestUrl = swaggerCollection.schemes[0] + '://' +
         swaggerCollection.host +
@@ -113,7 +116,7 @@ SwaggerImporter = ->
         swaggerRequestPath
         
         if swaggerRequestQueries
-          swaggerRequestUrl = swaggerRequestUrl + swaggerRequestQueries
+          swaggerRequestUrl = swaggerRequestUrl + '?' + swaggerRequestQueries.join('&')
         
         return swaggerRequestUrl
             
