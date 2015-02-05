@@ -1,4 +1,5 @@
 require "tv4.js"
+require "yaml.min.js"
 
 SwaggerImporter = ->
 
@@ -138,15 +139,13 @@ SwaggerImporter = ->
           swaggerCollection = JSON.parse string
         catch error
           # Try YAML parse
-          # throw new Error "Debug :" + YAML
-          YAML = readFile "yaml.legacy.js"
-          swaggerCollection = YAML.parse string
+          swaggerCollection = yaml.load string
         
         schema = readFile "schema.json"
         valid = tv4.validate swaggerCollection, JSON.parse(schema)
 
         if not valid
-          throw new Error "Invalid Swagger file (invalid schema or not Swagger 2.0)"
+          throw new Error "Invalid Swagger file (invalid schema or schema version < 2.0)"
           
         if swaggerCollection
           

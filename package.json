@@ -6,7 +6,7 @@
     "mkdirp": "~0.5.0",
     "ncp": "~1.0.1",
     "tv4": "~1.1.9",
-    "yamljs": "~0.2.1",
+    "yaml-js": "latest",
     "swagger-schema-official": "latest"
   },
   "repository": {
