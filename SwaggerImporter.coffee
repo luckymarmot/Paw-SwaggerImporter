@@ -14,7 +14,7 @@ SwaggerImporter = ->
         headers = {}
         queries = {}
         formData = {}
-        body = {}
+        body
         
         # Extract contentType from Consumes and add the first one to Headers
         if swaggerRequestValue.consumes
@@ -39,7 +39,7 @@ SwaggerImporter = ->
             
           # Add Body
           if swaggerRequestParamValue.in == 'body' #Only string
-            body[swaggerRequestParamValue.name] = swaggerRequestParamValue.name
+            body = @json_from_definition_schema swaggerCollection, swaggerRequestParamValue.schema
         
         swaggerRequestUrl = @createSwaggerRequestUrl swaggerCollection, swaggerRequestPath, queries
         swaggerRequestMethod = swaggerRequestMethod.toUpperCase()
@@ -53,29 +53,12 @@ SwaggerImporter = ->
         for key, value of headers
           pawRequest.setHeader key, value
         
-        # # Set raw body
-        # if postmanRequest["dataMode"] == "raw"
-        #     contentType = pawRequest.getHeaderByName "Content-Type"
-        #     rawRequestBody = postmanRequest["rawModeData"]
-        #     foundBody = false;
-        # 
-        #     # If the Content-Type contains "json" make it a JSON body
-        #     if contentType and contentType.indexOf("json") >= 0 and rawRequestBody and rawRequestBody.length > 0
-        #         # try to parse JSON body input
-        #         try
-        #             jsonObject = JSON.parse rawRequestBody
-        #         catch error
-        #             console.log "Cannot parse Request JSON: #{ postmanRequest["name"] } (ID: #{ postmanRequestId })"
-        #         # set the JSON body
-        #         if jsonObject
-        #             pawRequest.jsonBody = jsonObject
-        #             foundBody = true
-        # 
-        #     if not foundBody
-        #         pawRequest.body = rawRequestBody
-        # 
+        # Set raw body
+        pawRequest.body = body if body
+        
+        
         # Set Form URL-Encoded body
-        if Object.keys(formData).length > 0      
+        if Object.keys(formData).length > 0
             # Set Form URL-Encoded body
             if headers['Content-Type'] == "application/x-www-form-urlencoded"
               pawRequest.urlEncodedBody = formData
@@ -85,6 +68,33 @@ SwaggerImporter = ->
           
         return pawRequest
     
+    @json_from_definition_schema = (swaggerCollection, property, indent = 0) ->
+      
+        if property.type == 'string'
+            s = "\"string\""
+        else if property.type == 'integer'
+            s = "0"
+        else if property.type == 'boolean'
+            s = "true"
+        else if typeof(property) == 'object'
+            indent_str = Array(indent + 1).join('    ')
+            indent_str_children = Array(indent + 2).join('    ')
+            
+            if property.items
+              property = property.items
+              s = "[\n" +
+                  "#{indent_str_children}#{@json_from_definition_schema(swaggerCollection, property, indent+1)}" +
+                  "\n#{indent_str}]"
+            else
+              property = swaggerCollection.definitions[property["$ref"].split('/').pop()] if property["$ref"]
+              property = property.properties if property.properties # Skip properties
+                          
+              s = "{\n" +
+                  ("#{indent_str_children}\"#{key}\" : #{@json_from_definition_schema(swaggerCollection, value, indent+1)}" for key, value of property).join(',\n') +
+                  "\n#{indent_str}}"
+
+        return s
+        
     @createSwaggerRequestUrl = (swaggerCollection, swaggerRequestPath, queries) ->
       
         # Build swaggerRequestQueries
@@ -120,7 +130,7 @@ SwaggerImporter = ->
         return pawGroup
         
     @importString = (context, string) ->
-    
+        
         try
           # Try JSON parse
           swaggerCollection = JSON.parse string
@@ -133,7 +143,7 @@ SwaggerImporter = ->
 
         if not valid
           throw new Error "Invalid Swagger file (invalid schema or schema version < 2.0)"
-          
+        
         if swaggerCollection
           
           # Create a PawGroup
