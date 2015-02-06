@@ -46,16 +46,16 @@ SwaggerImporter = ->
           
         # Create Paw request
         pawRequest = context.createRequest swaggerRequestTitle, swaggerRequestMethod, swaggerRequestUrl
-        # 
-        # for index, swaggerRequestParamValue of swaggerRequestValue.parameters
-        
+      
         # Add Headers
         for key, value of headers
           pawRequest.setHeader key, value
+          
+        # Add Basic Auth if required
+        pawRequest.setHeader "Authorization", "HTTP Basic Auth (Username/Password)" if @has_basic_auth swaggerCollection, swaggerRequestValue
         
         # Set raw body
         pawRequest.body = body if body
-        
         
         # Set Form URL-Encoded body
         if Object.keys(formData).length > 0
@@ -68,6 +68,14 @@ SwaggerImporter = ->
           
         return pawRequest
     
+    @has_basic_auth = (swaggerCollection, swaggerRequestValue) ->
+      for security in swaggerRequestValue.security
+        for own key, value of security
+          if swaggerCollection.securityDefinitions[key] and swaggerCollection.securityDefinitions[key].type == 'basic'
+            return true
+          break
+      return false
+      
     @json_from_definition_schema = (swaggerCollection, property, indent = 0) ->
       
         if property.type == 'string'
