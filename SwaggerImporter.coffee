@@ -146,6 +146,9 @@ SwaggerImporter = ->
         
         if swaggerCollection
           
+          # Define host to localhost if not specified in file
+          swaggerCollection.host = if swaggerCollection.host then swaggerCollection.host else 'localhost'
+          
           # Create a PawGroup
           pawRootGroup = context.createRequestGroup swaggerCollection.info.title
           
