@@ -1,5 +1,4 @@
 require "tv4.js"
-require "yaml.min.js"
 
 SwaggerImporter = ->
 
@@ -69,11 +68,12 @@ SwaggerImporter = ->
         return pawRequest
     
     @has_basic_auth = (swaggerCollection, swaggerRequestValue) ->
-      for security in swaggerRequestValue.security
-        for own key, value of security
-          if swaggerCollection.securityDefinitions[key] and swaggerCollection.securityDefinitions[key].type == 'basic'
-            return true
-          break
+      if swaggerRequestValue.security
+        for security in swaggerRequestValue.security
+          for own key, value of security
+            if swaggerCollection.securityDefinitions[key] and swaggerCollection.securityDefinitions[key].type == 'basic'
+              return true
+            break
       return false
       
     @json_from_definition_schema = (swaggerCollection, property, indent = 0) ->
@@ -138,14 +138,10 @@ SwaggerImporter = ->
         return pawGroup
         
     @importString = (context, string) ->
-        
-        try
-          # Try JSON parse
-          swaggerCollection = JSON.parse string
-        catch error
-          # Try YAML parse
-          swaggerCollection = yaml.load string
-        
+
+        # Try JSON parse
+        swaggerCollection = JSON.parse string
+
         schema = readFile "schema.json"
         valid = tv4.validate swaggerCollection, JSON.parse(schema)
 
