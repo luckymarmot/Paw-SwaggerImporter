@@ -144,9 +144,14 @@ SwaggerImporter = ->
         try
           # Try JSON parse
           swaggerCollection = JSON.parse string
-        catch error
-          # Try YAML parse
-          swaggerCollection = yaml.load string
+        catch jsonParseError
+          try
+            # Try YAML parse
+            swaggerCollection = yaml.load string
+          catch yamlParseError
+            console.log jsonParseError
+            console.log yamlParseError
+            throw new Error "Invalid Swagger file format (invalid JSON or YAML file)"
 
         schema = readFile "schema.json"
         valid = tv4.validate swaggerCollection, JSON.parse(schema)
