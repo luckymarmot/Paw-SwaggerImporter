@@ -4,13 +4,15 @@
   "devDependencies": {
     "coffee-script": "latest",
     "mkdirp": "~0.5.0",
-    "ncp": "~1.0.1",
-    "tv4": "~1.1.9",
-    "yaml-js": "latest",
-    "swagger-schema-official": "latest"
+    "ncp": "~1.0.1"
   },
   "repository": {
     "type": "git",
     "url": "git@github.com:luckymarmot/Paw-SwaggerImporter.git"
+  },
+  "dependencies": {
+    "swagger-schema-official": "^2.0.0-96305d9",
+    "tv4": "^1.2.7",
+    "yaml-js": "^0.1.1"
   }
 }

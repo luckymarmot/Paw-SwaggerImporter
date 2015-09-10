@@ -1,5 +1,5 @@
-require "tv4.js"
-require "yaml.min.js"
+(loadScript or require)("tv4.js")
+(loadScript or require)("yaml.js")
 
 SwaggerImporter = ->
 
@@ -149,8 +149,8 @@ SwaggerImporter = ->
             # Try YAML parse
             swaggerCollection = yaml.load string
           catch yamlParseError
-            console.log jsonParseError
-            console.log yamlParseError
+            console.error "Trying JSON Format: #{ jsonParseError }"
+            console.error "Trying YAML Format: #{ yamlParseError }"
             throw new Error "Invalid Swagger file format (invalid JSON or YAML file)"
 
         schema = readFile "schema.json"
