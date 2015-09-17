@@ -1,5 +1,5 @@
-(loadScript or require)("tv4.js")
-(loadScript or require)("yaml.js")
+(this.loadScript or require)("tv4.js")
+(this.loadScript or require)("yaml.js")
 
 SwaggerImporter = ->
 
