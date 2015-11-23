@@ -113,9 +113,10 @@ SwaggerImporter = ->
         for key, value of queries
           swaggerRequestQueries.push "#{key}=#{value}"
 
-        swaggerRequestUrl = (if swaggerCollection.schemes then swaggerCollection.schemes[0] else 'http') +
-          '://' +
-          (swaggerCollection.host or 'echo.luckymarmot.com')
+        swaggerRequestUrlPrefix = (if swaggerCollection.schemes then swaggerCollection.schemes[0] else 'http') +
+          '://'
+
+        swaggerRequestUrlPostfix = ''
 
         # add basePath
         if swaggerCollection.basePath and swaggerCollection.basePath.length > 0
@@ -128,17 +129,19 @@ SwaggerImporter = ->
           # make sure it doesn't end with a /
           if basePath.length > 0 and basePath[basePath.length - 1] == '/'
             basePath = basePath.substr(0, basePath.length - 1)
-          swaggerRequestUrl += basePath
+          swaggerRequestUrlPostfix += basePath
 
         # add path
         if not swaggerRequestPath or swaggerRequestPath.length == 0 or swaggerRequestPath[0] != '/'
           throw new Error "Invalid Swagger, path must begin with a /"
-        swaggerRequestUrl += swaggerRequestPath
+        swaggerRequestUrlPostfix += swaggerRequestPath
 
         if swaggerRequestQueries
-          swaggerRequestUrl = swaggerRequestUrl + '?' + swaggerRequestQueries.join('&')
+          swaggerRequestUrlPostfix = swaggerRequestUrlPostfix + '?' + swaggerRequestQueries.join('&')
 
-        return swaggerRequestUrl
+        varID = swaggerCollection.newDomain.getVariableByName("host").id
+        dynamicHostValue = new DynamicValue "com.luckymarmot.EnvironmentVariableDynamicValue", {environmentVariable: varID}
+        return new DynamicString swaggerRequestUrlPrefix, dynamicHostValue, swaggerRequestUrlPostfix
 
     @createPawGroup = (context, swaggerCollection, swaggerRequestPathName, swaggerRequestPathValue) ->
 
@@ -179,8 +182,12 @@ SwaggerImporter = ->
 
           # Define host to localhost if not specified in file
           swaggerCollection.host = if swaggerCollection.host then swaggerCollection.host else 'localhost'
+          swaggerCollection.newDomain = context.createEnvironmentDomain('hostEvnDomain')
+          swaggerCollection.newEnv = swaggerCollection.newDomain.createEnvironment('hostEnv')
+          swaggerCollection.newEnv.setVariablesValues({'host': swaggerCollection.host})
 
-          # Create a PawGroup
+
+        # Create a PawGroup
           pawRootGroup = context.createRequestGroup swaggerCollection.info.title
 
           # Add Swagger groups
