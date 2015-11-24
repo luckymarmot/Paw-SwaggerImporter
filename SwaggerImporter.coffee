@@ -113,9 +113,6 @@ SwaggerImporter = ->
         for key, value of queries
           swaggerRequestQueries.push "#{key}=#{value}"
 
-        swaggerRequestUrlPrefix = (if swaggerCollection.schemes then swaggerCollection.schemes[0] else 'http') +
-          '://'
-
         swaggerRequestUrlPostfix = ''
 
         # add basePath
@@ -139,9 +136,9 @@ SwaggerImporter = ->
         if swaggerRequestQueries
           swaggerRequestUrlPostfix = swaggerRequestUrlPostfix + '?' + swaggerRequestQueries.join('&')
 
-        varID = swaggerCollection.newDomain.getVariableByName("host").id
+        varID = swaggerCollection.newDomain.getVariableByName("baseURL").id
         dynamicHostValue = new DynamicValue "com.luckymarmot.EnvironmentVariableDynamicValue", {environmentVariable: varID}
-        return new DynamicString swaggerRequestUrlPrefix, dynamicHostValue, swaggerRequestUrlPostfix
+        return new DynamicString dynamicHostValue, swaggerRequestUrlPostfix
 
     @createPawGroup = (context, swaggerCollection, swaggerRequestPathName, swaggerRequestPathValue) ->
 
@@ -182,9 +179,10 @@ SwaggerImporter = ->
 
           # Define host to localhost if not specified in file
           swaggerCollection.host = if swaggerCollection.host then swaggerCollection.host else 'localhost'
-          swaggerCollection.newDomain = context.createEnvironmentDomain('hostEvnDomain')
+          urlPrefix = (if swaggerCollection.schemes then swaggerCollection.schemes[0] else 'http') + '://' + swaggerCollection.host
+          swaggerCollection.newDomain = context.createEnvironmentDomain(swaggerCollection.info.title + ' Domain')
           swaggerCollection.newEnv = swaggerCollection.newDomain.createEnvironment('hostEnv')
-          swaggerCollection.newEnv.setVariablesValues({'host': swaggerCollection.host})
+          swaggerCollection.newEnv.setVariablesValues({'baseURL': urlPrefix})
 
 
         # Create a PawGroup
