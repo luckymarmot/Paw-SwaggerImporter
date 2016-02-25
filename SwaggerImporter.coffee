@@ -27,15 +27,15 @@ SwaggerImporter = ->
 
           # Add Queries
           if swaggerRequestParamValue.in == 'query' and swaggerRequestParamValue.type == 'string'
-            queries[swaggerRequestParamValue.name] = swaggerRequestParamValue.name
+            queries[swaggerRequestParamValue.name] = if swaggerRequestParamValue.default then swaggerRequestParamValue.default else sswaggerRequestParamValue.name
 
           # Add Headers
           if swaggerRequestParamValue.in == 'header' and swaggerRequestParamValue.type == 'string'
-            headers[swaggerRequestParamValue.name] = swaggerRequestParamValue.name
+            headers[swaggerRequestParamValue.name] = if swaggerRequestParamValue.default then swaggerRequestParamValue.default else swaggerRequestParamValue.name
 
           # Add Url Encoded
           if swaggerRequestParamValue.in == 'formData' and swaggerRequestParamValue.type == 'string'
-            formData[swaggerRequestParamValue.name] = swaggerRequestParamValue.name
+            formData[swaggerRequestParamValue.name] = if swaggerRequestParamValue.default then swaggerRequestParamValue.default else sswaggerRequestParamValue.name
 
           # Add Body
           if swaggerRequestParamValue.in == 'body' #Only string
