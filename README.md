@@ -17,8 +17,21 @@ Only [Swagger schema 2.0 specification](https://github.com/swagger-api/swagger-s
 
 ### Build & Install
 
+install dependencies
+
 ```shell
 npm install
+```
+
+in order to get the cake command, you might need to run
+
+```shell
+npm install -g coffee-script
+```
+
+then build and run with cake
+
+```shell
 cake build
 cake install
 ```
