@@ -27,7 +27,7 @@ SwaggerImporter = ->
 
           # Add Queries
           if swaggerRequestParamValue.in == 'query' and swaggerRequestParamValue.type == 'string'
-            queries[swaggerRequestParamValue.name] = if swaggerRequestParamValue.default then swaggerRequestParamValue.default else sswaggerRequestParamValue.name
+            queries[swaggerRequestParamValue.name] = if swaggerRequestParamValue.default then swaggerRequestParamValue.default else swaggerRequestParamValue.name
 
           # Add Headers
           if swaggerRequestParamValue.in == 'header' and swaggerRequestParamValue.type == 'string'
@@ -35,7 +35,7 @@ SwaggerImporter = ->
 
           # Add Url Encoded
           if swaggerRequestParamValue.in == 'formData' and swaggerRequestParamValue.type == 'string'
-            formData[swaggerRequestParamValue.name] = if swaggerRequestParamValue.default then swaggerRequestParamValue.default else sswaggerRequestParamValue.name
+            formData[swaggerRequestParamValue.name] = if swaggerRequestParamValue.default then swaggerRequestParamValue.default else swaggerRequestParamValue.name
 
           # Add Body
           if swaggerRequestParamValue.in == 'body' #Only string
@@ -80,11 +80,20 @@ SwaggerImporter = ->
     @json_from_definition_schema = (swaggerCollection, property, indent = 0) ->
 
         if property.type == 'string'
-            s = "\"string\""
+        	if property.hasOwnProperty("default") && property.default?
+	            s = "\"" + property.default + "\""
+	        else
+	        	s = "\"string\""
         else if property.type == 'integer'
-            s = "0"
+            if property.hasOwnProperty("default") && property.default?
+                s = property.default
+            else
+            	s = "0"
         else if property.type == 'boolean'
-            s = "true"
+            if property.hasOwnProperty("default") && property.default?
+                s = property.default
+            else
+            	s = "true"
         else if typeof(property) == 'object'
             indent_str = Array(indent + 1).join('    ')
             indent_str_children = Array(indent + 2).join('    ')
