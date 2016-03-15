@@ -143,7 +143,18 @@ SwaggerImporter = ->
     @createPawGroup = (context, swaggerCollection, swaggerRequestPathName, swaggerRequestPathValue) ->
 
         # Create Paw group
-        pawGroup = context.createRequestGroup swaggerRequestPathName
+        pawGroupName = swaggerRequestPathName
+
+        # use resource name (first part of the path) as paw group name
+        rx = /(\/.+?)\//
+        match = rx.exec swaggerRequestPathName
+        if match && match[1]
+            pawGroupName = match[1]
+
+        # Create Paw group for resource
+        pawGroup = context.getRequestGroupByName pawGroupName
+        if typeof pawGroup is 'undefined'
+            pawGroup = context.createRequestGroup pawGroupName
 
         for own swaggerRequestMethod, swaggerRequestValue of swaggerRequestPathValue
 
