@@ -156,6 +156,13 @@ SwaggerImporter = ->
 
         for own swaggerRequestMethod, swaggerRequestValue of swaggerRequestPathValue
 
+            # Add global 'consumes' to individual pawRequest
+            if swaggerCollection.consumes
+              # Don't override the RequestValue.consumes with the global swaggerCollection.consumes, if
+              # the individual RequestValue.consumes is already set
+              if not swaggerRequestValue.consumes?.length
+                swaggerRequestValue.consumes = swaggerCollection.consumes
+
             # Create a Paw request
             pawRequest = @createPawRequest context, swaggerCollection, swaggerRequestPathName, swaggerRequestMethod, swaggerRequestValue
 
