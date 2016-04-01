@@ -171,43 +171,85 @@ SwaggerImporter = ->
 
         return pawGroup
 
-    @importString = (context, string) ->
+    @canImport = (context, items) ->
+      a = 0
+      b = 0
+      for item in items
+        a += @_canImportItem(context, item)
+        b += 1
+      return if b > 0 then a/b else 0
 
+    @_canImportItem = (context, item) ->
+      try
+        # Try JSON parse
+        swag = JSON.parse(item.content)
+      catch jsonParseError
         try
-          # Try JSON parse
-          swaggerCollection = JSON.parse string
-        catch jsonParseError
-          try
-            # Try YAML parse
-            swaggerCollection = yaml.load string
-          catch yamlParseError
-            console.error "Trying JSON Format: #{ jsonParseError }"
-            console.error "Trying YAML Format: #{ yamlParseError }"
-            throw new Error "Invalid Swagger file format (invalid JSON or YAML file)"
+          # Try YAML parse
+          swag = yaml.load(item.content)
+        catch yamlParseError
+          return 0
+      if swag and swag.swagger and swag.swagger == '2.0' and swag.info
+        return 1
+      return 0
 
-        schema = readFile "schema.json"
-        valid = tv4.validate swaggerCollection, JSON.parse(schema)
+    @import = (context, items, options) ->
+      order = options?.order or null
+      parent = options?.parent or null
+      for item in items
+        @_importStringToGroup(context, item.content, {
+          parent: parent,
+          order: order,
+        })
+        order += 1
+      return true
 
-        if not valid
-          throw new Error "Invalid Swagger file (invalid schema or schema version < 2.0):\n#{ tv4.error }"
+    @importString = (context, str) ->
+      return @_importStringToGroup(context, str)
 
-        if swaggerCollection
+    @_importStringToGroup = (context, str, options={}) ->
 
-          # Define host to localhost if not specified in file
-          swaggerCollection.host = if swaggerCollection.host then swaggerCollection.host else 'localhost'
+      try
+        # Try JSON parse
+        swaggerCollection = JSON.parse(str)
+      catch jsonParseError
+        try
+          # Try YAML parse
+          swaggerCollection = yaml.load(str)
+        catch yamlParseError
+          console.error "Trying JSON Format: #{ jsonParseError }"
+          console.error "Trying YAML Format: #{ yamlParseError }"
+          throw new Error "Invalid Swagger file format (invalid JSON or YAML file)"
 
-          # Create a PawGroup
-          pawRootGroup = context.createRequestGroup swaggerCollection.info.title
+      schema = readFile "schema.json"
+      valid = tv4.validate swaggerCollection, JSON.parse(schema)
 
-          # Add Swagger groups
-          for own swaggerRequestPathName, swaggerRequestPathValue of swaggerCollection.paths
+      if not valid
+        throw new Error "Invalid Swagger file (invalid schema or schema version < 2.0):\n#{ tv4.error }"
 
-            pawGroup = @createPawGroup context, swaggerCollection, swaggerRequestPathName, swaggerRequestPathValue
+      if swaggerCollection
 
-            # Add group to root
-            pawRootGroup.appendChild pawGroup
+        # Define host to localhost if not specified in file
+        swaggerCollection.host = if swaggerCollection.host then swaggerCollection.host else 'localhost'
 
-          return true
+        # Create a PawGroup
+        pawRootGroup = context.createRequestGroup(swaggerCollection.info.title)
+
+        # Set parent and order of group
+        if options.parent
+            options.parent.appendChild(pawRootGroup)
+        if options.order and options.order >= 0
+            pawRootGroup.order = options.order
+
+        # Add Swagger groups
+        for own swaggerRequestPathName, swaggerRequestPathValue of swaggerCollection.paths
+
+          pawGroup = @createPawGroup context, swaggerCollection, swaggerRequestPathName, swaggerRequestPathValue
+
+          # Add group to root
+          pawRootGroup.appendChild(pawGroup)
+
+        return true
 
     return
 
