@@ -1,6 +1,7 @@
-import BaseImporter, {
+import BaseImporter from 'paw-base-importer'
+import {
     Parser
-} from 'paw-base-importer'
+} from 'api-flow'
 import yaml from 'yaml-js'
 
 @registerImporter // eslint-disable-line
@@ -14,7 +15,7 @@ export default class SwaggerImporter extends BaseImporter {
     canImport(context, items) {
         let sum = 0
         for (let item of items) {
-            sum += this._canImportItem(context, item)
+            sum += ::this._canImportItem(context, item)
         }
         return items.length > 0 ? sum / items.length : 0
     }
@@ -34,8 +35,10 @@ export default class SwaggerImporter extends BaseImporter {
         }
         if (swag) {
             // converting objects to bool to number, fun stuff
-            let score =
-                (!!swag.swagger + swag.swagger === '2.0' + !!swag.info) / 3
+            let score = 0
+            score += swag.swagger ? 1 / 3 : 0
+            score += swag.swagger === '2.0' ? 1 / 3 : 0
+            score += swag.info ? 1 / 3 : 0
             return score
         }
         return 0

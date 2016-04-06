@@ -1,20 +1,21 @@
+identifier=com.luckymarmot.PawExtensions.SwaggerImporter
+extensions_dir=$(HOME)/Library/Containers/com.luckymarmot.Paw/Data/Library/Application Support/com.luckymarmot.Paw/Extensions/
+
 build:
-	npm run compile
-	cp README.md LICENSE ./lib/
+	npm run build
+	cp README.md LICENSE ./build/$(identifier)/
 
 clean:
-	rm -Rf ./lib/
+	rm -Rf ./build/
 
-install: clean npm-install build
+transfer:
+	mkdir -p "$(extensions_dir)$(identifier)/"
+	cp -r ./build/$(identifier)/* "$(extensions_dir)$(identifier)/"
+
+install: clean build transfer
 
 test:
 	npm test
 
-lint:
-	npm run lint
-
-npm-install:
-	npm install
-
-publish: install
-	npm publish
+archive: build
+	cd ./build/; zip -r cURLImporter.zip "$(identifier)/"
