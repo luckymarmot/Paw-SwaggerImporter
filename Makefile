@@ -18,4 +18,4 @@ test:
 	npm test
 
 archive: build
-	cd ./build/; zip -r cURLImporter.zip "$(identifier)/"
+	cd ./build/; zip -r SwaggerImporter.zip "$(identifier)/"

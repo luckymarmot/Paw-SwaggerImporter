@@ -15,40 +15,31 @@ Only [Swagger schema 2.0 specification](https://github.com/swagger-api/swagger-s
 
 ## Development
 
-### Build & Install
-
-install dependencies
+### Prerequisites
 
 ```shell
+nvm install
+nvm use
 npm install
 ```
 
-in order to get the cake command, you might need to run
+### Build
 
 ```shell
-npm install -g coffee-script
+make build
 ```
 
-then build and run with cake
+### Install
 
 ```shell
-cake build
-cake install
-```
-
-### Watch
-
-During development, watch for changes:
-
-```shell
-cake watch
+make install
 ```
 
 ## License
 
 This Paw Extension is released under the [MIT License](LICENSE). Feel free to fork, and modify!
 
-Copyright © 2014 Paw Inc.
+Copyright © 2014-2016 Paw Inc.
 
 ## Contributors
 
