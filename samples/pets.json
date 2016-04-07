@@ -25,7 +25,7 @@
                     "pet"
                 ],
                 "summary": "Add a new pet to the store",
-                "description": "",
+                "description": "Azda azda azda",
                 "operationId": "addPet",
                 "consumes": [
                     "application/json",
@@ -112,7 +112,7 @@
                 "tags": [
                     "pet"
                 ],
-                "summary": "Finds Pets by status",
+                "summary": "",
                 "description": "Multiple status values can be provided with comma seperated strings",
                 "operationId": "findPetsByStatus",
                 "produces": [
@@ -122,7 +122,7 @@
                 "parameters": [
                     {
                         "in": "query",
-                        "name": "status",
+                        "name": "s̡̬̙̘̲͆t̫͗ͣͅ͏a͔̓͌̽ͪt̛̺̮̄u̶̟s͠",
                         "description": "Status values that need to be considered for filter",
                         "required": false,
                         "type": "array",
