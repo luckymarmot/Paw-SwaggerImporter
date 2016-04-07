@@ -2,7 +2,7 @@ import BaseImporter from 'paw-base-importer'
 import {
     Parser
 } from 'api-flow'
-import yaml from 'yaml-js'
+import yaml from 'js-yaml'
 
 @registerImporter // eslint-disable-line
 export default class SwaggerImporter extends BaseImporter {
@@ -27,7 +27,7 @@ export default class SwaggerImporter extends BaseImporter {
         }
         catch (jsonParseError) {
             try {
-                swag = yaml.load(item.content)
+                swag = yaml.safeLoad(item.content)
             }
             catch (yamlParseError) {
                 return 0
