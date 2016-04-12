@@ -46,13 +46,18 @@ export default class SwaggerImporter extends BaseImporter {
 
     /*
       @params:
+        - reqContexts
         - context
         - items
         - options
     */
-    createRequestContext(context, item) {
+    createRequestContext(reqContexts, context, item) {
         const parser = new Parser.Swagger()
         let reqContext = parser.parse(item.content)
-        return reqContext
+        reqContexts.push({
+            context: reqContext,
+            items: [ item ]
+        })
+        return reqContexts
     }
 }
