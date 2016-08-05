@@ -1,15 +1,15 @@
 language: node_js
 before_script:
 - make build
-before_deploy:
-- make archive
-deploy:
-  provider: releases
-  api_key:
-    secure: Zj9icvfN6DHuX7KDc48yLokNAH1IWnVMXyS52+1vzvApAgtGKVb+V9sWXBVrG40bFw9LeQ8pKGG0lqbaXMaZ8hfhNGNYT4OeqIR20Hj0tfTb/9eCZy18CDKLDtanDJ0cF9WbNvLfBm0vx1VKJOOio263nIYjrOSqD1GBjkP88z4=
-  file: build/SwaggerImporter.zip
-  skip_cleanup: true
-  on:
-    tags: true
-    all_branches: true
-    repo: luckymarmot/Paw-SwaggerImporter
+# before_deploy:
+# - make archive
+# deploy:
+#   provider: releases
+#   api_key:
+#     secure: Zj9icvfN6DHuX7KDc48yLokNAH1IWnVMXyS52+1vzvApAgtGKVb+V9sWXBVrG40bFw9LeQ8pKGG0lqbaXMaZ8hfhNGNYT4OeqIR20Hj0tfTb/9eCZy18CDKLDtanDJ0cF9WbNvLfBm0vx1VKJOOio263nIYjrOSqD1GBjkP88z4=
+#   file: build/SwaggerImporter.zip
+#   skip_cleanup: true
+#   on:
+#     tags: true
+#     all_branches: true
+#     repo: luckymarmot/Paw-SwaggerImporter
