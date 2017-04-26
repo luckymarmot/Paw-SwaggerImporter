@@ -10138,9 +10138,22 @@ methods.fixRemotePaths = function (options, uri, swagger) {
   });
 };
 
+methods.fixImplicitHost = function (uri) {
+  if (!uri) {
+    return 'localhost';
+  }
+
+  var host = (0, _url.parse)(uri).host;
+  if (!host) {
+    return 'localhost';
+  }
+
+  return host;
+};
+
 methods.fixImplicitUriReferences = function (options, uri, swagger) {
   if (!swagger.host) {
-    swagger.host = uri ? (0, _url.parse)(uri).host : 'localhost';
+    swagger.host = methods.fixImplicitHost(uri);
   }
 
   if (!swagger.schemes || !swagger.schemes.length) {
@@ -13627,7 +13640,7 @@ methods.handleUnkownFormat = function () {
  * @returns {void}
  */
 methods.handleInvalidSwagger = function () {
-  var message = 'Invalid Swagger File (invalid schema / version < 2.0)';
+  var message = 'Invalid Swagger File (invalid schema / version < 2.0)\n' + _tv2.default.error + '\n' + 'Potential culprit: ' + _tv2.default.error.dataPath;
   var error = new __errors__.NotASwaggerV2(message);
   throw error;
 };
@@ -14478,9 +14491,14 @@ methods.getRequestsForResource = function (store, security, resourceObject) {
  * @param {Entry} entry: a operation object, as an entry
  * @returns {URL} the updated path endpoint
  */
-methods.updatePathWithParametersFromOperations = function (store, path, _ref14) {
-  var key = _ref14.key,
+methods.updatePathWithParametersFromOperations = function (store, path) {
+  var _ref14 = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {},
+      key = _ref14.key,
       value = _ref14.value;
+
+  if (!key && !value) {
+    return path;
+  }
 
   var container = methods.getParameterContainerForOperation(store, value, key);
   var pathParams = container.get('path');
