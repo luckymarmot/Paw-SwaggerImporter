@@ -1,46 +1,46 @@
-[![Build Status](https://travis-ci.org/luckymarmot/Paw-SwaggerImporter.svg?branch=master)](https://travis-ci.org/luckymarmot/Paw-SwaggerImporter)
+# Swagger/OpenAPI 2.0 Importer
 
-# Swagger Specification Importer (Paw Extension)
-
-A [Paw Extension](http://luckymarmot.com/paw/extensions/) to import [Swagger](http://swagger.io/) Specification into Paw. (**JSON/YAML** supported)
-
-#### Notice :
-
-Only [Swagger schema 2.0 specification](https://github.com/swagger-api/swagger-spec/blob/master/versions/2.0.md) supported -> [Swagger 1.2 to 2.0 Migration Guide](https://github.com/swagger-api/swagger-spec/wiki/Swagger-1.2-to-2.0-Migration-Guide).
+A [Paw Extension](https://paw.cloud/extensions) to import [Swagger](http://swagger.io/) (aka. [OpenAPI](https://www.openapis.org/)) API description files into Paw.
 
 ## How to use?
 
 * In Paw, go to File menu, then Import...
-* Pick the saved Swagger file, and make sure the Format is "Swagger Importer"
+* Pick the saved Swagger file, and make sure the Format is "Swagger 2.0 Importer"
+
+## Versions supported
+
+Only [Swagger 2.0 specification](https://github.com/swagger-api/swagger-spec/blob/master/versions/2.0.md) is supported.
+
+* For Swagger 1.2 files, follow the [Swagger 1.2 to 2.0 Migration Guide](https://github.com/swagger-api/swagger-spec/wiki/Swagger-1.2-to-2.0-Migration-Guide)
+* For Swagger 3.0 files, unfortunately it isn't yet supported at this point
 
 ## Development
+
+⚠️ This project is entierly based on [API Flow](https://github.com/luckymarmot/API-Flow). This repository only containes the compiled file for this extension. Please refer to the *API Flow* repository for the orignal source code and for development.
+
+The commands below refer to the *API Flow* project.
 
 ### Prerequisites
 
 ```shell
 nvm install
-nvm use
-npm install
+yarn install
 ```
 
-### Build
+### Build and install to Paw
 
 ```shell
-make build
+TARGET="swagger" make transfer
 ```
 
-### Install
+### Build for deployment
 
 ```shell
-make install
+TARGET="swagger" make pack
 ```
 
 ## License
 
-This Paw Extension is released under the [MIT License](LICENSE). Feel free to fork, and modify!
+This Paw Extension is released under the [MIT License](https://github.com/luckymarmot/API-Flow/blob/develop/LICENSE). Feel free to fork, and modify!
 
-Copyright © 2014-2016 Paw Inc.
-
-## Contributors
-
-See [Contributors](https://github.com/luckymarmot/Paw-SwaggerImporter/graphs/contributors).
+Copyright © 2014-2017 [Paw](https://paw.cloud)

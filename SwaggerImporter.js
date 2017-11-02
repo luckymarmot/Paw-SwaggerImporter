@@ -10095,11 +10095,12 @@ methods.resolve = function (options, uri) {
       $ref = _ref4$$ref === undefined ? '' : _ref4$$ref;
 
   var uriToLoad = (0, _url.resolve)(uri, $ref);
-  if ((0, _url.parse)(uriToLoad).protocol === 'file:') {
-    return options.fsResolver.resolve(uriToLoad.split('#')[0]);
+  var protocol = (0, _url.parse)(uriToLoad).protocol;
+  if (protocol && protocol.substr(0, 4) === 'http') {
+    return options.httpResolver.resolve(uriToLoad.split('#')[0]);
   }
 
-  return options.httpResolver.resolve(uriToLoad.split('#')[0]);
+  return options.fsResolver.resolve(uriToLoad.split('#')[0]);
 };
 
 methods.objectMap = function (obj, func) {
@@ -15910,7 +15911,7 @@ methods.convertAuthIntoDynamicValue = function (auth) {
  * @param {Environment} environment: the environment in which this auth value is applicable.
  * @param {Auth} auth: the auth to add to the domain
  * @param {string} key: the name of the auth
- * @returns {EnvironmentVariable} the newly created environment variable.
+ * @returns {{ variable: EnvironmentVariable, auth: Auth }} the newly created environment variable.
  */
 methods.addAuthToDomain = function (domain, environment, auth, key) {
   var variable = domain.createEnvironmentVariable(key);
@@ -15918,7 +15919,7 @@ methods.addAuthToDomain = function (domain, environment, auth, key) {
   var ds = methods.wrapDV(dv);
   variable.setValue(ds, environment);
 
-  return variable;
+  return { variable: variable, auth: auth };
 };
 
 /**
@@ -16497,19 +16498,22 @@ methods.getContainerFromRequest = function (request) {
  * converts an auth into a DynamicString from a reference.
  * @param {Store} store: the store to use to resolve the reference
  * @param {Reference} reference: the reference to an EnvironmentVariable representing an Auth.
- * @returns {DynamicString} the corresponding DynamicString
+ * @returns {{ variable: DynamicString, auth: Auth }} the corresponding DynamicString
  */
 methods.convertAuthFromReference = function (store, reference) {
-  var variable = store.getIn(['auth', reference.get('uuid')]);
+  var _store$getIn = store.getIn(['auth', reference.get('uuid')]),
+      variable = _store$getIn.variable,
+      auth = _store$getIn.auth;
+
   var ds = variable.createDynamicString();
-  return ds;
+  return { variable: ds, auth: auth };
 };
 
 /**
  * converts a reference or an auth into a DynamicString Entry.
  * @param {Store} store: the store used to resolve references
  * @param {Auth|Reference} authOrReference: the record to convert into a DynamicString
- * @returns {DynamicString} the corresponding DynamicString
+ * @returns {{ variable: DynamicString, auth: Auth }} the corresponding DynamicString
  */
 methods.convertReferenceOrAuthToDsEntry = function (store, authOrReference) {
   if (authOrReference instanceof _Reference2.default) {
@@ -16517,18 +16521,28 @@ methods.convertReferenceOrAuthToDsEntry = function (store, authOrReference) {
   }
 
   var dv = methods.convertAuthIntoDynamicValue(authOrReference);
-  return methods.wrapDV(dv);
+  return { variable: methods.wrapDV(dv), auth: authOrReference };
 };
 
 // TODO create Variable DS that has enum with all auth possible
 /**
  * sets the Auth DynamicString as am Authorization Header.
  * @param {PawRequest} pawRequest: the paw request to update
- * @param {DynamicString} auth: the DynamicString representing an auth
+ * @param {Objecti} authData: the object containing the auth representation as a DynamicString and
+ * the original auth Record.
+ * @param {DynamicString} variable: the DynamicString representing an auth
+ * @param {Auth} auth: the original auth
  * @returns {PawRequest} the update paw request
  */
-methods.addAuthToRequest = function (pawRequest, auth) {
-  pawRequest.setHeader('Authorization', auth);
+methods.addAuthToRequest = function (pawRequest, _ref7) {
+  var variable = _ref7.variable,
+      auth = _ref7.auth;
+
+  var authName = 'Authorization';
+  if (auth instanceof _Auth2.default.ApiKey) {
+    authName = auth.get('name');
+  }
+  pawRequest.setHeader(authName, variable);
   return pawRequest;
 };
 
@@ -16673,13 +16687,13 @@ methods.createGroups = function (context, resources, group, groupName) {
  * @returns {boolean} whether the import was successful or not
  */
 methods.serialize = function () {
-  var _ref7 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
-      _ref7$options = _ref7.options;
+  var _ref8 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
+      _ref8$options = _ref8.options;
 
-  _ref7$options = _ref7$options === undefined ? {} : _ref7$options;
-  var context = _ref7$options.context,
-      _ref7$api = _ref7.api,
-      api = _ref7$api === undefined ? new _Api2.default() : _ref7$api;
+  _ref8$options = _ref8$options === undefined ? {} : _ref8$options;
+  var context = _ref8$options.context,
+      _ref8$api = _ref8.api,
+      api = _ref8$api === undefined ? new _Api2.default() : _ref8$api;
 
   var store = methods.createEnvironments(context, api);
   var resources = methods.createRequests(context, store, api);
